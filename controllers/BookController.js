@@ -1,29 +1,30 @@
 const { ObjectId } = require('mongodb');
-const connect = require('../database/db');
+const Book = require('../models/Book');
 
 exports.index = async (req, res) => {
-  const db = await connect();
-  const books = await db.collection('books').find().toArray();
+  const books = await Book.find();
   res.json(books);
 };
 
 exports.create = async (req, res) => {
-  const db = await connect();
-  await db.collection('books').insertOne(req.body);
-  res.status(201).send('Book is stored');
+  try {
+    await Book.create(req.body);
+    res.status(201).json({
+      message: 'Book is stored',
+    });
+  } catch (error) {
+    res.status(500).json(error.errors);
+  }
 };
 
 exports.get = async (req, res) => {
-  const _id = ObjectId(req.params.id);
-  const db = await connect();
-  const book = await db.collection('books').find({ _id }).toArray();
+  const book = await Book.findById(req.params.id);
   res.json(book);
 };
 
 exports.update = async (req, res) => {
   const _id = ObjectId(req.params.id);
-  const db = await connect();
-  await db.collection('books').updateOne({ _id }, { $set: req.body });
+  await Book.updateOne({ _id }, { $set: req.body });
   res.json({
     message: 'book is updated successfully',
   });
@@ -31,7 +32,6 @@ exports.update = async (req, res) => {
 
 exports.remove = async (req, res) => {
   const _id = ObjectId(req.params.id);
-  const db = await connect();
-  await db.collection('books').deleteOne({ _id });
+  await Book.deleteOne({ _id });
   res.status(204).json();
 };
