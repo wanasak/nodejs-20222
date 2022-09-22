@@ -5,6 +5,8 @@ const port = 3001;
 const routes = require('./routes/index');
 const connect = require('./database/db');
 
+require('dotenv').config();
+
 app.set('view engine', 'pug');
 
 app.use(bodyParser.json());

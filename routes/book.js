@@ -1,9 +1,13 @@
 const express = require('express');
-const { ObjectId } = require('mongodb');
+const auth = require('../middleware/auth');
 const bookController = require('../controllers/BookController');
 const bookRouter = express.Router();
 
-bookRouter.route('/').get(bookController.index).post(bookController.create);
+bookRouter
+  .use(auth)
+  .route('/')
+  .get(bookController.index)
+  .post(bookController.create);
 
 bookRouter
   .route('/:id')
